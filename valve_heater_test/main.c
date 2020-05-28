@@ -560,7 +560,7 @@ int main()
     initSystem();
 
     // State 1: Adsorption Process
-    Valve(2);                                                   // Flow from terminal A of the solenoid valve which is located at the bottom
+    Valve(2);                                                   // Flow from port A of the solenoid valve which is located at the bottom
 
     UARTprintf("Adsorption Process\n");
     DelayS(90);
@@ -568,7 +568,7 @@ int main()
 
     // State 2: Desorption Switching
     UARTprintf("Starting Desorption Process\n");
-    Valve(1);                                                   // Switch to flow from terminal B of the solenoid valve
+    Valve(1);                                                   // Switch to flow from port B of the solenoid valve
 
     uint32_t adc_data = 0;
 
@@ -617,7 +617,7 @@ int main()
 
     UARTprintf("Switch the solenoid valve instantly\n");
     
-    // State 3-4: Involves quick switching of the Solenoid valve from Position B to A to B; 2 = position A
+    // State 3-4: Involves quick switching of the Solenoid valve from port B to A to B; 2 = port A
     
     Valve(2);           // Switches the valve to port A       
     DelayMS(30);
