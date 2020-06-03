@@ -22,169 +22,158 @@ int main(void)
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOL);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOK);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
 
 
     GPIOPinTypeGPIOOutput(GPIO_PORTL_BASE, GPIO_PIN_5| GPIO_PIN_4| GPIO_PIN_3| GPIO_PIN_2| GPIO_PIN_1| GPIO_PIN_0);
     GPIOPinTypeGPIOOutput(GPIO_PORTN_BASE, GPIO_PIN_5| GPIO_PIN_4| GPIO_PIN_3| GPIO_PIN_2);
     GPIOPinTypeGPIOOutput(GPIO_PORTK_BASE, GPIO_PIN_7| GPIO_PIN_6| GPIO_PIN_5| GPIO_PIN_4| GPIO_PIN_3| GPIO_PIN_2| GPIO_PIN_1| GPIO_PIN_0);
     GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE, GPIO_PIN_3| GPIO_PIN_2);
+    GPIOPinTypeGPIOOutput(GPIO_PORTE_BASE, GPIO_PIN_4| GPIO_PIN_3| GPIO_PIN_2| GPIO_PIN_1| GPIO_PIN_0);
 
-//      GPIOPinTypeGPIOOutput(GPIO_PORTL_BASE, GPIO_PIN_3);
-//      GPIOPinTypeGPIOOutput(GPIO_PORTL_BASE, GPIO_PIN_2);
-//      GPIOPinTypeGPIOOutput(GPIO_PORTL_BASE, GPIO_PIN_1);
-//      GPIOPinTypeGPIOOutput(GPIO_PORTL_BASE, GPIO_PIN_0);
+    GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_2, GPIO_PIN_2);  // PWM B high for voltage pulse to valve 1 
+    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_2, GPIO_PIN_2);  // PWM A high for voltage pulse to valve 2 
+    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_3, GPIO_PIN_3);  // PWM B high for voltage pulse to valve 3 
+    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);  // PWM A high for voltage pulse to valve 4 
+    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_2, GPIO_PIN_2);  // PWM B high for voltage pulse to valve 5
 
-//    GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_3, GPIO_PIN_3);
-//    GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_2, 0x0);
-//    GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_1, GPIO_PIN_3);
-//    GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_0, 0x0);
+	// Use STBY pins according to the ICs used
+	// If 2 valves are operated with a single IC, they use only one STBY pin 
+	GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_0, GPIO_PIN_0);  // STBY high for valve 1 
+    GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, GPIO_PIN_1);  // STBY high for valve 2
+    GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_2, GPIO_PIN_2);  // STBY high for valve 3
+    GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_3, GPIO_PIN_3);  // STBY high for valve 4
+    GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, GPIO_PIN_4);  // STBY high for valve 5
 
-    GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_2, GPIO_PIN_2);  // PWM B high for voltage pulse to valve 1 on IC 1
-    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_2, GPIO_PIN_2);  // PWM A high for voltage pulse to valve 2 on IC 5
-    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_3, GPIO_PIN_3);  // PWM B high for voltage pulse to valve 3 on IC 5
-    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);  // PWM A high for voltage pulse to valve 4 on IC 4
-    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_2, GPIO_PIN_2);  // PWM B high for voltage pulse to valve 5 on IC 4
+   // Pump in IC1
+   int i=0;
 
-//    // Pump in IC1
-//    int i=0;
-//
-//    GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_3, GPIO_PIN_3);  // Pump ON
-//    GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_2, 0x0);         // Pump ON
-//
-//    while(i<3){
-//        delayMs(1000);
-//        i++;
-//    }
-//
-//    GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_3, 0x0);         // Pump OFF
-//    GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_2, 0x0);         // Pump OFF
-//
-//    delayMs(2000);
-//
-    // Valve 1 in IC1
-    GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_2, GPIO_PIN_2);  // STBY high
-    while(1) {
+   GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_3, GPIO_PIN_3);  // Pump ON
+   GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_2, 0x0);         // Pump ON
 
+   while(i<3){
+       delayMs(1000);
+       i++;
+   }
+	
+   GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_3, 0x0);         // Pump OFF
+   GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_2, 0x0);         // Pump OFF
+
+   DelayMS(2000);
+
+    
+	
+	
+	// Valve 1 in IC1
     GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_0, GPIO_PIN_0);  // BIN1 high port B
     GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_1, 0x0);         // BIN2 low
 
-    delayMs(30);
+    DelayMS(30);
 
     GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_0, 0x0);         // BIN1 low turning the solenoid current off
     GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_1, 0x0);         // BIN1 low
 
-    delayMs(100);
-//    GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_2, 0x0);         // PWM low
+    DelayMS(30);
 
     GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_0, 0x0);         // BIN1 low switching to port A
     GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_1, GPIO_PIN_1);  // BIN2 high
 
-    delayMs(30);
+    DelayMS(30);
 
     GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_0, 0x0);         // BIN1 low
     GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_1, 0x0);         // BIN1 low
 
-    delayMs(1000);
+    DelayMS(5000);
 
-    GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_0, GPIO_PIN_0);  // BIN1 high port B
-    GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_1, 0x0);         // BIN2 low
-
-    delayMs(30);
-
-    GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_0, 0x0);         // BIN1 low turning the solenoid current off
-    GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_1, 0x0);         // BIN1 low
-
-    delayMs(10000);
-
-    }
-    //    GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_2, GPIO_PIN_2);  // PWM high for voltage pulse to valve 1
-//    delayMs(20);
-//    GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_2, 0x0);         // PWM low
-
-
-//    delayMs(5000);
-
-/*    // Valve 2 in IC5
+    
+    
+    
+    // Valve 2 in IC5
     GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_0, GPIO_PIN_0);  // AIN1 high
     GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_1, 0x0);         // AIN2 low
-    //GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_5, GPIO_PIN_5);  // STBY high
 
-//    delayMs(20);
-//    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_2, 0x0);         // PWM A low
-    delayMs(20);
+    DelayMS(20);
 
-    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_0, 0x0);  // AIN1 high
-    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_1, GPIO_PIN_1);         // AIN2 low
+	GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_0, 0x0);         // AIN1 low
+    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_1, 0x0);         // AIN1 low
 
-    delayMs(20);
+	DelayMS(20);
+	
+    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_0, 0x0);  		// AIN1 low
+    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_1, GPIO_PIN_1);  // AIN2 high
+
+    DelayMS(20);
 
     GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_0, 0x0);         // AIN1 low
     GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_1, 0x0);         // AIN1 low
 
-    delayMs(2000);
+    DelayMS(2000);
 
+    
+    
+    
     // Valve 3 in IC5
     GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_4, GPIO_PIN_4);  // BIN1 high
     GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_5, 0x0);         // BIN2 low
-    //GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_5, GPIO_PIN_5);  // STBY high
 
-//    delayMs(20);
-//    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_3, 0x0);         // PWM B low
+    DelayMS(20);
 
-    delayMs(20);
+	GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_4, 0x0);         // BIN1 low
+    GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_5, 0x0);         // BIN2 low
 
-    GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_4, 0x0);  // BIN1 high
-    GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_5, GPIO_PIN_5);         // BIN2 low
+	DelayMS(20);
+	
+    GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_4, 0x0);  				// BIN1 high
+    GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_5, GPIO_PIN_5);          // BIN2 low
 
-    delayMs(20);
+    DelayMS(20);
 
     GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_4, 0x0);         // BIN1 low
     GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_5, 0x0);         // BIN2 low
 
-    delayMs(2000);
+    DelayMS(2000);
 
+    
+    
+    
     // Valve 4 in IC4
     GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_4, GPIO_PIN_4);  // AIN1 high
     GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_5, 0x0);         // AIN2 low
     //GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_5, GPIO_PIN_5);  // STBY high
 
-//    delayMs(20);
-//    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x0);         // PWM A low
-    delayMs(20);
+    DelayMS(20);
 
-    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_4, 0x0);  // AIN1 high
-    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_5, GPIO_PIN_5);         // AIN2 low
+    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_4, 0x0);  				// AIN1 high
+    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_5, GPIO_PIN_5);          // AIN2 low
 
-    delayMs(20);
+    DelayMS(20);
 
     GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_4, 0x0);         // AIN1 low
     GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_5, 0x0);         // AIN2 low
 
-    delayMs(2000);
+    DelayMS(2000);
 
-    // Valve 5 in IC4
+
+	
+	
+	// Valve 5 in IC4
     GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_6, GPIO_PIN_6);  // BIN1 high
     GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_7, 0x0);         // BIN2 low
-    //GPIOPinWrite(GPIO_PORTL_BASE, GPIO_PIN_5, GPIO_PIN_5);  // STBY high
 
-//    delayMs(20);
-//    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_2, 0x0);         // PWM B low
-    delayMs(20);
+    DelayMS(20);
 
-    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_6, 0x0);  // BIN1 high
-    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_7, GPIO_PIN_7);         // BIN2 low
+    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_6, 0x0);         // BIN1 high
+    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_7, GPIO_PIN_7);  // BIN2 low
 
-    delayMs(20);
+    DelayMS(20);
 
     GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_6, 0x0);         // BIN1 low
     GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_7, 0x0);         // BIN2 low
-*/
-
-
+    
     return 0;
 }
 
-void delayMs(uint32_t ui32Ms) {
+void DelayMS(uint32_t ui32Ms) {
 
     // 1 clock cycle = 1 / SysCtlClockGet() second
     // 1 SysCtlDelay = 3 clock cycle = 3 / SysCtlClockGet() second
