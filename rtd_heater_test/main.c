@@ -35,16 +35,7 @@ void readIO();
 //! - SSI0Tx  - PA5 (DOUT of ADC)
 //!
 
-//const int resistance_upper_threshold = 10066329;
-//const int resistance_upper_threshold = 13528329; // 2.0k
-//const int resistance_upper_threshold = 15783950; // 2.2k
-//const int resistance_upper_threshold = 14092861;
-const int resistance_upper_threshold = 8053950; //2.4k with 2 gain
-//const int resistance_offset = 8653950;
-
 uint32_t ui32SysClock;  // System Clock
-
-volatile bool timeout = false;
 
 // AD7793 Registers
 
@@ -72,11 +63,6 @@ uint32_t int_count;
 
 void initPeripherals()
 {
-    // Configure system clock
-//    ui32SysClock = SysCtlClockFreqSet((SYSCTL_XTAL_25MHZ |
-//            SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480),
-//           25000000);
-
     ui32SysClock = SysCtlClockFreqSet((SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480), 120000000);
 
     // Enable SSI0
@@ -97,7 +83,7 @@ void initPeripherals()
     GPIOPinTypeGPIOOutput(GPIO_PORTP_BASE, GPIO_PIN_3); // Chip Select 9
     GPIOPinTypeGPIOOutput(GPIO_PORTP_BASE, GPIO_PIN_2); // Chip Select 10
 
-    GPIOPinWrite(GPIO_PORTP_BASE, GPIO_PIN_2, 0);           // Enabling Chip Select 10
+    GPIOPinWrite(GPIO_PORTP_BASE, GPIO_PIN_2, 0x0);           // Enabling Chip Select 10
 //    GPIOPinWrite(GPIO_PORTP_BASE, GPIO_PIN_3, GPIO_PIN_3);  // Disabling Chip Select 9
 //    GPIOPinWrite(GPIO_PORTP_BASE, GPIO_PIN_4, GPIO_PIN_4);  // Disabling Chip Select 8
 //    GPIOPinWrite(GPIO_PORTP_BASE, GPIO_PIN_5, GPIO_PIN_5);  // Disabling Chip Select 7
@@ -407,9 +393,6 @@ void initUART()
 
     GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
 
-    //    UARTConfigSetExpClk(UART0_BASE, ui32SysClk, 115200,
-    //                        (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
-
     UARTStdioConfig(0, 115200, ui32SysClock);
 }
 
@@ -434,9 +417,9 @@ void heaterOFF()
     DelayUS(100);
 }
 
-int main()
+void initSystem()
 {
-    // Initialize all the peripherals for the clock, SSI and UART
+     // Initialize all the peripherals for the clock, SSI and UART
     initPeripherals();
     /* initialize ADC*/
     DelayUS(1000);
@@ -456,14 +439,17 @@ int main()
 
     configureAD7793();
 
-       // Write to Mode register
+    // Write to Mode register
     writeToModeReg();
 
     DelayMS(120);
-    /* initialize ADC*/
+}
+int main()
+{
+    initSystem();
 
     uint32_t adc_data = 0;
-    const int resistance_upper_threshold = 150000;
+    const int resistance_upper_threshold = 150000;      // 1730000 = room temperature, 2235000 = 200 degrees Celsius
 
     UARTprintf("Now starting the heater\n");
     UARTprintf("-----Actual reads----\n");
@@ -495,150 +481,3 @@ int main()
 
     return 0;
 }
-
-
-
-
-
-
-
-
-    /*
-     * Algorithms for the GC heater circuit
-     * 1. Initially valve will be at position A and heater at room temperature for time t1
-     * 2. Then, valve will be switched to B and heater will be turned ON until its temperature reached 200 degree C.
-     * 3. 200 degree C will be maintained for next 5 seconds by an ON-OFF controller with threshold of +-10
-     * 4. The valve will be switched to A for a minimum possible time when temperature is around 200.
-     * 5. Finally, the valve will be shut off by switching to B and heater will be turned OFF.
-     */
-
-    // State 1: Adsorption Process
-//    UARTprintf("Starting Adsorption Process\n");
-//    First_Solenoid(2); // Flow from terminal A of the solenoid valve which is located at the bottom
-//    DelayMS(10000);  // change this delay to 180s afterwards
-
-    // State 2: Desorption Switching
-//    First_Solenoid(1); // Flow from terminal B of the solenoid valve
-//    DelayMS(6000);
-
-//    uint32_t adc_data = 0;
-//
-//    UARTprintf("Now starting the heater\n");
-//    heaterON();
-//    DelayMS(1000);
-
-//    int garbage_index;
-//    // Throwing first 10 values in the garbage
-//    UARTprintf("-----Garbage reads----\n");
-//    for(garbage_index = 0; garbage_index < 10; garbage_index++)
-//    {
-//        DelayMS(10);
-//
-//        configureAD7793();
-//
-//        // Write to Mode register
-//        writeToModeReg();
-//
-//        DelayUS(120000);
-//        // Read Mode register
-//        // readMode();
-//
-//        // Read Data Register
-//        adc_data = readData();
-//    }
-
-//    UARTprintf("-----Actual reads----\n");
-//    adc_data = 0;
-
-//    TimerEnable(TIMER0_BASE, TIMER_A); // Comment it out when deploy
-//    while(adc_data < resistance_upper_threshold)
-//    int curr_int_count = 1;
-
-//    DelayMS(10);
-//
-//        configureAD7793();
-//
-//        // Write to Mode register
-//        writeToModeReg();
-//
-//        DelayMS(120);
-//        // Read Mode register
-//        // readMode();
-//
-//        // Read Data Register
-//        adc_data = readData();
-//        UARTprintf("ADC Data is %d \n", adc_data);
-//        heaterOFF();
-
-//    while(1)
-//    {
-//        if(int_count != curr_int_count)
-//        {
-//            UARTprintf("--------Inside the if switching the GPIO--------\n");
-//            if((int_count % 2) == 1)
-//            {
-//
-//                GPIOPinWrite(GPIO_PORTP_BASE, GPIO_PIN_2, GPIO_PIN_2);  // Disabling Chip Select 10
-//                DelayUS(10000);
-//                GPIOPinWrite(GPIO_PORTP_BASE, GPIO_PIN_3, 0);           // Enabling Chip Select 9
-//                DelayUS(10000);
-//            }
-//            else
-//            {
-//                GPIOPinWrite(GPIO_PORTP_BASE, GPIO_PIN_2, 0);           // Enabling Chip Select 10
-//                DelayUS(10000);
-//                GPIOPinWrite(GPIO_PORTP_BASE, GPIO_PIN_3, GPIO_PIN_3);  // Disabling Chip Select 9
-//                DelayUS(10000);
-//            }
-//            curr_int_count = int_count;
-//        }
-
-//    }
-
-//    UARTprintf("Reached desired temperature\n");
-//    maintainTemp(adc_data);
-
-//    UARTprintf("Switch the solenoid valve instantly\n");
-//    // State 3-4: Involves quick switching of the Solenoid valve from Position B to A to B
-//    First_Solenoid(2);
-//    DelayUS(15);
-//    First_Solenoid(1);
-//    DelayUS(15);
-
-    // Final heater OFF
-//    heaterOFF();
-
-//    while(1)
-//    {
-//        // Read ID register
-//        readID();
-//
-//        // Read Status register
-//        readStatus();
-//
-//        // Write to Config register
-//        writeToConfigReg();
-//
-//        // Read Config register
-//        readConfig();
-//
-//        // Write to IO register
-//        writeToIOReg();
-//
-//        // Read IO Register
-//        readIO();
-//
-//        configureAD7793();
-//
-//        // Write to Mode register
-//        writeToModeReg();
-//
-//        DelayUS(120000);
-//        // Read Mode register
-//        // readMode();
-//
-//        // Read Data Register
-//        uint32_t adc_data = 0;
-//        adc_data = readData();
-//    }
-
