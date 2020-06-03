@@ -24,20 +24,19 @@ int main(void)
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
 
-
     GPIOPinTypeGPIOOutput(GPIO_PORTL_BASE, GPIO_PIN_5| GPIO_PIN_4| GPIO_PIN_3| GPIO_PIN_2| GPIO_PIN_1| GPIO_PIN_0);
     GPIOPinTypeGPIOOutput(GPIO_PORTN_BASE, GPIO_PIN_5| GPIO_PIN_4| GPIO_PIN_3| GPIO_PIN_2);
     GPIOPinTypeGPIOOutput(GPIO_PORTK_BASE, GPIO_PIN_7| GPIO_PIN_6| GPIO_PIN_5| GPIO_PIN_4| GPIO_PIN_3| GPIO_PIN_2| GPIO_PIN_1| GPIO_PIN_0);
     GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE, GPIO_PIN_3| GPIO_PIN_2);
     GPIOPinTypeGPIOOutput(GPIO_PORTE_BASE, GPIO_PIN_4| GPIO_PIN_3| GPIO_PIN_2| GPIO_PIN_1| GPIO_PIN_0);
 
-    GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_2, GPIO_PIN_2);  // PWM B high for voltage pulse to valve 1 
-    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_2, GPIO_PIN_2);  // PWM A high for voltage pulse to valve 2 
-    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_3, GPIO_PIN_3);  // PWM B high for voltage pulse to valve 3 
-    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);  // PWM A high for voltage pulse to valve 4 
-    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_2, GPIO_PIN_2);  // PWM B high for voltage pulse to valve 5
+    GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_2, GPIO_PIN_2);  // PWM high for valve 1 
+    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_2, GPIO_PIN_2);  // PWM high for valve 2 
+    GPIOPinWrite(GPIO_PORTK_BASE, GPIO_PIN_3, GPIO_PIN_3);  // PWM high for valve 3 
+    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);  // PWM high for valve 4 
+    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_2, GPIO_PIN_2);  // PWM high for valve 5
 
-	// Use STBY pins according to the ICs used
+    // Use STBY pins according to the ICs used
 	// If 2 valves are operated with a single IC, they use only one STBY pin 
 	GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_0, GPIO_PIN_0);  // STBY high for valve 1 
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, GPIO_PIN_1);  // STBY high for valve 2
